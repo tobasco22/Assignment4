@@ -5,6 +5,57 @@
 
 int extraMemoryAllocated;
 
+void merge(int pData[], int l, int m, int r)
+{
+	int i;
+	int j;
+	int k;
+	int n1 = m - l + 1;
+	int n2 = r - m;
+
+	//creates temporary arrays
+	int *L = (int*) malloc(n1*sizeof(int));
+	int *R = (int*) malloc(n2*sizeof(int));
+
+
+	//copy the data over to the temporary arrays
+	for (i = 0; i < n1; i++)
+		L[i] = pData[l + i];
+	for (j = 0; j < n2; j++)
+		R[j] = pData[m + 1 + j];
+
+
+	//the next section merges the temporry arrays back into pData array
+	i = 0;
+	j = 0;
+	k = l;
+
+	while (i < n1 && j < n2){
+		if (L[i] <= R[j]){
+			pData[k] = L[i];
+			i++;
+		}
+		else{
+			pData[k] = R[j];
+			j++;
+		}
+		k++;
+	}
+	while (i < n1){
+		pData[k] = L[i];
+		i++;
+		k++;
+	}
+	while (j < n2){
+		pData[k] = R[j];
+		j++;
+		k++;
+	}
+	//frees the temporary arrays
+	free(L);
+	free(R);
+}
+
 // implement merge sort
 // extraMemoryAllocated counts bytes of extra memory allocated
 void mergeSort(int pData[], int l, int r)
@@ -15,7 +66,7 @@ int m = (l+r)/2;
 // Sort first and second halves
 mergeSort(pData, l, m);
 mergeSort(pData, m+1, r);
-// printf("Testing l=%d r=%d m=%d\n", l, r, m);
+
 merge(pData, l, m, r);
 }
 }
@@ -30,7 +81,7 @@ void insertionSort(int* pData, int n)
 for (i = 1; i < n; i++)
 {
 item = pData[i];
-/* Move elements of arr[0..i-1], that are
+/* Move elements of pData[0..i-1], that are
 greater than key, to one position ahead
 of their current position */
 for(j=i-1; j>=0; j--)
@@ -99,6 +150,12 @@ int parseData(char *inputFileName, int **ppData)
 		fscanf(inFile,"%d\n",&dataSz);
 		*ppData = (int *)malloc(sizeof(int) * dataSz);
 		// Implement parse data block
+		for (int i = 0; i < dataSz; i++)
+        {
+            fscanf(inFile, "%d", &((*ppData)[i]));
+        }
+
+        fclose(inFile);
 	}
 	
 	return dataSz;
